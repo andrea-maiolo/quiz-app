@@ -1,7 +1,6 @@
 import React from 'react';
 
-function Question(props) {    
-
+function Question(props) {  
     let decodedCategory = (decodeURI(props.category)).split('\%')[0]
     let decodedQuestion = decodeURI(props.question)
     decodedQuestion = decodedQuestion.replace("%3F", "?")
@@ -14,7 +13,7 @@ function Question(props) {
     answersArray.splice(randomIndex,0, decodedCorrect)
      
  
-
+    console.log(props.formData[props.id]) 
     return(
         <div className="singleQuestion">
             <h3>Category: {decodedCategory}</h3>
@@ -25,7 +24,7 @@ function Question(props) {
                     id={answersArray[0]}
                     value={answersArray[0]}
                     name={props.id}
-                    // checked={formData.decodedQuestion === answersArray[0]}
+                    checked={props.formData[props.id] === props.id}
                     onChange={props.onChange}
                 />
                 <label htmlFor={answersArray[0]}>{answersArray[0]}</label>

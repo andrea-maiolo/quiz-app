@@ -5,46 +5,56 @@ import Question from './components/Question'
 
 function App() {
 
+  const [fetchQuestions, setFetchQuestions] = React.useState([])
   const [allQuestions, setAllQuestions] = React.useState([])
-
-  React.useEffect(function() {
-    fetch("https://opentdb.com/api.php?amount=5&encode=url3986")
-      .then(res => res.json())
-      .then(data => setAllQuestions(data.results))
-  },[0])
-
-
-  //setAllQuestions need to be used
-    for(let i = 0; i < allQuestions.length; i++) {
-      let questionId = nanoid()
-      allQuestions[i].id = questionId
-  }
-  
   const [formData, setFormData] = React.useState({})
 
+  React.useEffect(()=>{
+    console.log("fetching")
+      fetch("https://opentdb.com/api.php?amount=5&encode=url3986")
+      .then(response => response.json())
+      .then(data => setFetchQuestions(data.results))
+  },[])
 
-  // console.log(formData)
-    function handleChange(event) {
-       for(let i=0; i< allQuestions.length; i++) {
-         let myCurrentObject = allQuestions[i]
-         if(allQuestions[i].id == event.target.name){
-           const currentAnswer = (`${allQuestions.indexOf(myCurrentObject)}`)
-           formData[currentAnswer] = event.target.value
-         }
-       }
-      //  if(event.target.name === allQuestions[0].id){
-      //    formData.allQuestions[0].id = event.target.value
-      //  }
-       console.log(formData)
-      //  console.log(formData)
-      // const {name, value, type, checked} = event.target
-      //   setFormData(prevFormData => {
-      //       return {
-      //           ...prevFormData,
-      //           [name]: value
-      //       }
-      //   })
+  React.useEffect(()=>{
+    setId()
+  },[fetchQuestions])
+
+  function setId(){
+    if(fetchQuestions.length != 0 ){
+      const updateQuestions = fetchQuestions.map(question =>{
+        return {
+          ...question,
+          id: nanoid()
+        }
+      })
+    setAllQuestions(updateQuestions)
+    console.log("questions ready")
     }
+  }
+
+    function handleChange(e) {
+      const answer = e.target.value
+      const referenceQuestion = e.target.name
+      console.log(answer)
+      
+      for(let i=0; i<allQuestions.length; i++){
+        const curQ = allQuestions[i]
+        if(curQ.id == referenceQuestion){
+          setFormData(prevFormData => {
+            return {
+              ...prevFormData,
+              [curQ.id]:answer
+            }
+          })
+        }
+      }
+    }  
+
+    // function handleSubmission(e){
+    //   e.preventDefault()
+    //   console.log(formData)
+    // }
 
   const question = allQuestions.map(item => {
     return (
@@ -52,6 +62,7 @@ function App() {
         {...item}
         key={item.id}
         onChange={handleChange}
+        formData = {formData}
       />
     )
   })        
@@ -60,6 +71,7 @@ function App() {
     <div className="App">
       <form>
         {question}
+        {/* <button onClick={handleSubmission}>Submit</button> */}
       </form>
     </div>
   );
