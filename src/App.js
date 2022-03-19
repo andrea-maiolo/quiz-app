@@ -18,6 +18,7 @@ function App() {
 
   React.useEffect(()=>{
     setId()
+    decodeQuestion()
   },[fetchQuestions])
 
   function setId(){
@@ -33,28 +34,77 @@ function App() {
     }
   }
 
+  //new code
+
+  function decodeQuestion(){
+    console.log("running decoding")
+    if(fetchQuestions.length != 0){
+      let decodedCategory = ""
+      let decodedQuestion = ""
+      let decodedCorrect = "" 
+      let decodedIncorrect = "" 
+      let answersArray =[]
+      for (let i = 0; i < fetchQuestions.length; i++) {
+        const questionToDecode = fetchQuestions[i];
+        decodedCategory = (decodeURI(questionToDecode.category)).split('\%')[0]
+        decodedQuestion = decodeURI(questionToDecode.question)
+        decodedCorrect = decodeURI(questionToDecode.correct_answer)
+        decodedIncorrect =  decodeURI(questionToDecode.incorrect_answers)
+        answersArray = decodedIncorrect.split(",")
+        let randomIndex = Math.floor(Math.random() * answersArray.length)
+        answersArray.splice(randomIndex,0, decodedCorrect)
+        
+          const questionsWithIdAndDecoded = fetchQuestions.map(question =>{
+            return {
+              ...question,
+              category: decodedCategory,
+              question: decodedQuestion,
+            }
+          })
+      setAllQuestions(questionsWithIdAndDecoded)
+      console.log(questionsWithIdAndDecoded)
+
+      //all questions are the same like this
+      }
+    }
+  }
+     
+
+     
+//end new code
+
+  React.useEffect(()=>{
+    formCheck()
+  },[allQuestions])
+
+  function formCheck(){
+    if(allQuestions.length !=0){
+      for (let i = 0; i < allQuestions.length; i++) {
+        const element = allQuestions[i].id;
+        setFormData(prevFormData => {
+          return{
+            ...prevFormData,
+            [element]: ""
+          }
+        })
+      }
+    }
+  }
+
     function handleChange(e) {
       const answer = e.target.value
       const referenceQuestion = e.target.name
-      console.log(answer)
-      
-      for(let i=0; i<allQuestions.length; i++){
-        const curQ = allQuestions[i]
-        if(curQ.id == referenceQuestion){
-          setFormData(prevFormData => {
-            return {
-              ...prevFormData,
-              [curQ.id]:answer
-            }
-          })
-        }
+
+      if(formData[referenceQuestion] != null){
+        setFormData(prevFormData => {
+              return {
+                ...prevFormData,
+                [referenceQuestion] : answer
+              }
+            })
+            console.log(formData)
       }
     }  
-
-    // function handleSubmission(e){
-    //   e.preventDefault()
-    //   console.log(formData)
-    // }
 
   const question = allQuestions.map(item => {
     return (
