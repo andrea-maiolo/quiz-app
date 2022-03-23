@@ -19,98 +19,95 @@ function App() {
     setId()
   },[fetchQuestions])
 
-  React.useEffect(()=>{
-    decoding()
-  },[allQuestions])
-
   const setId = function (){
     if(fetchQuestions.length != 0 ){
-      const updateQuestions = fetchQuestions.map(question =>{
+      let entireArrayOfAnswers = []
+      for (let i = 0; i < fetchQuestions.length; i++) {
+        const q = fetchQuestions[i];
+        let answersArray = [...q.incorrect_answers]
+        let randomIndex = Math.floor(Math.random() * answersArray.length)
+        answersArray.splice(randomIndex, 0, q.correct_answer)
+        entireArrayOfAnswers.push(answersArray)
+      }
+      const updateQuestions = fetchQuestions.map(e=>{
+        let i = fetchQuestions.indexOf(e)
         return {
-          ...question,
-          id: nanoid()
+          ...e,
+          id: nanoid(),
+          answersArray: entireArrayOfAnswers[i]
         }
       })
     setAllQuestions(updateQuestions)
     }
   }
 
-  //new code
+  React.useEffect(()=>{
+    formCreation()
+  },[allQuestions])
 
-  const decoding = function(){
-    let entireArrayOfAnswers = []
-    for (let i = 0; i < allQuestions.length; i++) {
-      const q = allQuestions[i];
-      let answersArray = [...q.incorrect_answers]
-      let randomIndex = Math.floor(Math.random() * answersArray.length)
-      answersArray.splice(randomIndex, 0, q.correct_answer)
-      entireArrayOfAnswers.push(answersArray)
-    }
-    const newArray = allQuestions.map(e=>{
-      let i = allQuestions.indexOf(e)
-      return {
-        ...e,
-        answersArray: entireArrayOfAnswers[i]
+  function formCreation(){
+    if(allQuestions.length !=0){
+      for (let i = 0; i < allQuestions.length; i++) {
+        const element = allQuestions[i].id;
+        setFormData(prevFormData => {
+          return{
+            ...prevFormData,
+            [element]: ""
+          }
+        })
       }
-    })
-    //how can you update aq if this function is dependent upen it? EFFECT  
-    // (allQuestions)
+    }
   }
+
+    function handleChange(e) {
+      const answer = e.target.value
+      const referenceQuestion = e.target.name
+
+      if(formData[referenceQuestion] != null){
+        setFormData(prevFormData => {
+              return {
+                ...prevFormData,
+                [referenceQuestion] : answer
+              }
+            })
+      }
+    }  
+
     
-  
-      
-//end new code
+    function handleSubmission(e){
+      e.preventDefault()
+      let counter = 0
+      for (const property in formData) {
+        for (let i = 0; i < allQuestions.length; i++) {
+          const element = allQuestions[i];
+          if(element.id == property){
+            if(element.correct_answer == formData[property]){
+              counter++
+            }
+          }
+        }
+      }
+      console.log(counter)
+      return counter
+    }
 
-  // React.useEffect(()=>{
-  //   formCheck()
-  // },[allQuestions])
-
-  // function formCheck(){
-  //   if(allQuestions.length !=0){
-  //     for (let i = 0; i < allQuestions.length; i++) {
-  //       const element = allQuestions[i].id;
-  //       setFormData(prevFormData => {
-  //         return{
-  //           ...prevFormData,
-  //           [element]: ""
-  //         }
-  //       })
-  //     }
-  //   }
-  // }
-
-  //   function handleChange(e) {
-  //     const answer = e.target.value
-  //     const referenceQuestion = e.target.name
-
-  //     if(formData[referenceQuestion] != null){
-  //       setFormData(prevFormData => {
-  //             return {
-  //               ...prevFormData,
-  //               [referenceQuestion] : answer
-  //             }
-  //           })
-  //           console.log(formData)
-  //     }
-  //   }  
-
-  // const question = allQuestions.map(item => {
-  //   return (
-  //     <Question 
-  //       {...item}
-  //       key={item.id}
-  //       onChange={handleChange}
-  //       formData = {formData}
-  //     />
-  //   )
-  // })        
+  const question = allQuestions.map(item => {
+    return (
+      <Question 
+        {...item}
+        key={item.id}
+        onChange={handleChange}
+        formData = {formData}
+      />
+    )
+  })        
 
   return (
     <div className="App">
       <form>
-        h
-        {/* {question} */}
-        {/* <button onClick={handleSubmission}>Submit</button> */}
+        {question}
+        <button onClick={handleSubmission}>Submit</button>
+        { && <p>{counter}</p>}
       </form>
     </div>
   );
