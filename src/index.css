@@ -16,7 +16,7 @@ code {
     monospace;
 }
 
-.page-start{
+.initial-page{
   display: flex;
   flex-direction: column;
   align-items: center;

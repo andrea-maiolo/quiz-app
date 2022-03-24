@@ -1,8 +1,8 @@
 import React from 'react';
 
-function StartPage(props){
+function InitialPage(props){
     return(
-        <div className="page-start">
+        <div className="initial-page">
             <h1>Quiz time!</h1>
             <p>This is a project created in react. Enjoy the quiz!</p>
             <button onClick={props.handleDisplay}>Start quiz</button>
@@ -11,4 +11,4 @@ function StartPage(props){
 }
 
 
-export default StartPage;
+export default InitialPage;
