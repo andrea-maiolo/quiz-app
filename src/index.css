@@ -28,3 +28,11 @@ code {
 .singleQuestion{
   border: 1px solid black
 }
+
+.page-start{
+  display: flex;
+}
+
+.questions-page{
+  display:none
+}

@@ -46,7 +46,7 @@ function App() {
   },[allQuestions])
 
   function formCreation(){
-    if(allQuestions.length !=0){
+    if(allQuestions.length !==0){
       for (let i = 0; i < allQuestions.length; i++) {
         const element = allQuestions[i].id;
         setFormData(prevFormData => {
@@ -73,22 +73,25 @@ function App() {
       }
     }  
 
-    
+    const [result, setResult] = React.useState("")
+
     function handleSubmission(e){
       e.preventDefault()
       let counter = 0
       for (const property in formData) {
         for (let i = 0; i < allQuestions.length; i++) {
           const element = allQuestions[i];
-          if(element.id == property){
-            if(element.correct_answer == formData[property]){
+          if(element.id === property){
+            if(element.correct_answer === formData[property]){
               counter++
             }
           }
         }
       }
-      console.log(counter)
-      return counter
+      let myP = `You answerd ${counter}/5 correctly`
+      let subButton = document.querySelector("#subButton")
+      subButton.style.display="none"
+      setResult(myP)
     }
 
   const question = allQuestions.map(item => {
@@ -100,18 +103,35 @@ function App() {
         formData = {formData}
       />
     )
-  })        
+  }) 
 
+  function handleDisplay(){
+    let sP = document.querySelector(".startPage")
+    sP.style.display = 'none'
+    let qP = document.querySelector(".questions-page")
+    qP.style.display = 'block'  
+
+  }
+  
   return (
     <div className="App">
-      <form>
-        {question}
-        <button onClick={handleSubmission}>Submit</button>
-        { && <p>{counter}</p>}
-      </form>
+      <div className="startPage">
+        <StartPage handleDisplay={handleDisplay}/>
+      </div>
+      <div className="questions-page">
+        <form>
+          {question}
+          <button id="subButton" onClick={handleSubmission}>Submit</button>
+          {result !== "" &&
+          <p>{result}</p>
+          }
+          {result !== "" &&
+          <button id="playAgain">Play Again</button>
+          }
+        </form>
+      </div>
     </div>
   );
 }
 
 export default App;
-{/* <StartPage /> */}
