@@ -116,16 +116,18 @@ function App() {
         <InitialPage handleDisplay={handleDisplay}/>
       </div>
       <div className="questions-page">
-        <form>
-          {question}
-          <button id="subButton" onClick={handleSubmission}>Submit</button>
-          {result !== "" &&
-          <p>{result}</p>
-          }
-          {result !== "" &&
-          <button id="playAgain">Play Again</button>
-          }
-        </form>
+        <div className="questions">
+          <form id="form">
+            {question}
+            <button id="subButton" onClick={handleSubmission}>Submit</button>
+            {result !== "" &&
+            <p id="finalResult">{result}</p>
+            }
+            {result !== "" &&
+            <button id="playAgain">Play Again</button>
+            }
+          </form>
+        </div>
       </div>
     </div>
   );
